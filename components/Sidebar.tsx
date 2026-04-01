@@ -8,6 +8,7 @@ import {
   GanttChart,
   CheckSquare,
   Settings,
+  Plug,
 } from 'lucide-react'
 import clsx from 'clsx'
 
@@ -16,6 +17,7 @@ const navItems = [
   { label: 'Leads', href: '/leads', icon: Users },
   { label: 'Pipeline', href: '/pipeline', icon: GanttChart },
   { label: 'Tarefas', href: '/tasks', icon: CheckSquare },
+  { label: 'Integrações', href: '/integrations', icon: Plug },
 ]
 
 export default function Sidebar() {

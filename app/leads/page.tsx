@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { useState, useMemo, useEffect } from 'react'
 import { Plus, Search, Phone, Mail, ChevronDown } from 'lucide-react'
 import clsx from 'clsx'
