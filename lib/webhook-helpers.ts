@@ -13,12 +13,13 @@ const VALID_ORIGINS: LeadOrigin[] = [
 
 /**
  * Extrai o nome do lead.
- * Suporta: "name", "chatName" (GPT Maker nativo), "contact_name"
+ * Suporta campos em português (GPT Maker) e inglês.
  */
 export function extractName(body: Record<string, unknown>): string {
   return (
-    String(body.name ?? '').trim() ||
-    String(body.chatName ?? '').trim() ||
+    String(body.nome ?? '').trim() ||       // português (GPT Maker)
+    String(body.name ?? '').trim() ||       // inglês
+    String(body.chatName ?? '').trim() ||   // nativo GPT Maker
     String(body.contact_name ?? '').trim() ||
     ''
   )
@@ -26,10 +27,13 @@ export function extractName(body: Record<string, unknown>): string {
 
 /**
  * Extrai o telefone do lead.
- * Suporta "phone" e "contextId" (no WhatsApp, GPT Maker usa o número como contextId).
+ * Suporta campos em português (GPT Maker) e inglês.
  */
 export function extractPhone(body: Record<string, unknown>): string {
-  const phone = String(body.phone ?? '').trim()
+  const phone =
+    String(body.telefone ?? '').trim() ||   // português (GPT Maker)
+    String(body.phone ?? '').trim()         // inglês
+
   if (phone) return phone
 
   const ctx = String(body.contextId ?? '').replace(/@.*$/, '').trim()
