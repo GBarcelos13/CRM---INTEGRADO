@@ -106,12 +106,22 @@ function Accordion({ title, icon: Icon, children }: {
 export default function IntegrationsPage() {
   const [baseUrl, setBaseUrl] = useState('https://seu-dominio.com')
   const [secretVisible, setSecretVisible] = useState(false)
+  const [secretHint, setSecretHint] = useState<string | null>(null)
+  const [secretConfigured, setSecretConfigured] = useState(false)
 
-  useEffect(() => { setBaseUrl(window.location.origin) }, [])
+  useEffect(() => {
+    setBaseUrl(window.location.origin)
+    fetch('/api/config/webhook-secret')
+      .then(r => r.json())
+      .then(d => {
+        setSecretConfigured(d.configured)
+        setSecretHint(d.hint ?? null)
+      })
+      .catch(() => {})
+  }, [])
 
   const webhookUrl = (stage: string) => `${baseUrl}/api/webhooks/gptmaker/${stage}`
   const eventUrl   = `${baseUrl}/api/webhooks/gptmaker/event`
-  const secret     = 'ec3f94b046ab6a5106ee600fda858804bdc9cae50b98c462a35c3b915cddef97'
 
   return (
     <div className="flex flex-col h-full p-6 gap-6 max-w-4xl">
@@ -155,21 +165,31 @@ export default function IntegrationsPage() {
             <p className="text-xs text-slate-500 mb-2">
               Envie este valor no header{' '}
               <code className="bg-slate-100 px-1 py-0.5 rounded text-[11px]">Authorization: Bearer &lt;secret&gt;</code>{' '}
-              em todas as requisições ao CRM.
+              em todas as requisições ao CRM. Configure via{' '}
+              <code className="bg-slate-100 px-1 py-0.5 rounded text-[11px]">WEBHOOK_SECRET</code>{' '}
+              no <strong>.env.local</strong> ou nas variáveis de ambiente do Netlify.
             </p>
             <div className="flex items-center gap-2">
               <div className="flex-1 flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2">
-                <code className="flex-1 text-xs text-slate-700 font-mono tracking-widest truncate">
-                  {secretVisible ? secret : '••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••'}
-                </code>
-                <button
-                  onClick={() => setSecretVisible(v => !v)}
-                  className="text-slate-400 hover:text-slate-700 transition-colors shrink-0"
-                >
-                  {secretVisible ? <EyeOff size={14} /> : <Eye size={14} />}
-                </button>
+                {secretConfigured ? (
+                  <>
+                    <code className="flex-1 text-xs text-slate-700 font-mono tracking-widest truncate">
+                      {secretVisible && secretHint ? secretHint : '••••••••••••••••••••••••••••••••'}
+                    </code>
+                    <button
+                      onClick={() => setSecretVisible(v => !v)}
+                      className="text-slate-400 hover:text-slate-700 transition-colors shrink-0"
+                    >
+                      {secretVisible ? <EyeOff size={14} /> : <Eye size={14} />}
+                    </button>
+                  </>
+                ) : (
+                  <span className="text-xs text-amber-600 font-medium">
+                    ⚠ WEBHOOK_SECRET não configurado — defina nas variáveis de ambiente
+                  </span>
+                )}
               </div>
-              <CopyButton text={secret} label="Copiar" />
+              {secretConfigured && <CopyButton text={secretHint ?? ''} label="Copiar" />}
             </div>
           </div>
 
