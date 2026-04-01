@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
-import { extractName, extractPhone, normalizeOrigin, makeAvatar } from '../[stage]/route'
+import { extractName, extractPhone, normalizeOrigin, makeAvatar } from '@/lib/webhook-helpers'
 
 // ─── Mapeamento de eventos → estágio do pipeline ──────────────────────────────
 
